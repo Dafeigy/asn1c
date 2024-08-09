@@ -1,0 +1,25 @@
+name: Merge upstream branches
+on:
+  push:
+  schedule:
+    - cron:  '0 18 * * *'
+  watch:
+    types: [started]
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - uses: actions/checkout@v2.3.5
+      - name: Merge upstream
+        run: |
+          git config --global user.name dafeigy
+          git config --global user.email 1070642765@qq.com
+          git pull --unshallow
+          git remote add upstream https://github.com/mouse07410/asn1c
+          git fetch upstream
+          git checkout vlm_master
+          git merge --no-edit upstream/vlm_master
+          git push origin vlm_master
+          git fetch upstream --tags
+          git push --tags
